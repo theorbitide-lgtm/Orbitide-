@@ -15,6 +15,6 @@ log_level = 2
 [app:android]
 android.permissions = INTERNET
 android.api = 33
-android.ndk = 25c
-android.build_tools_version = 36.0.0
+android.minapi = 21
+android.ndk = 25b
 android.sdk = 33

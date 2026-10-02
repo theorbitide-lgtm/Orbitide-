@@ -1,8 +1,17 @@
 name: build
+
 on: [push]
+
 jobs:
   build:
     runs-on: ubuntu-22.04
+
     steps:
-      - uses: actions/checkout@v3
-      - uses
+      - uses: actions/checkout@v4
+
+      - uses: ArtemSBulgakov/buildozer-action@v1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: bin/*.apk

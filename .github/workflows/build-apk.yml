@@ -1,8 +1,12 @@
-name: Build ORBITIDE APK
-on: [push, workflow_dispatch]
+name: build
+
+on:
+  push:
+    branches: [ main, master ]
+
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python 3.10
@@ -17,20 +21,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y zip unzip python3-pip libffi-dev libssl-dev
+          sudo apt install -y zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --upgrade pip
-          pip install buildozer cython==0.29.33
+          pip install buildozer==1.5.0 cython==0.29.36
       - name: Build APK
         run: |
-          yes | buildozer android debug || true
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          SDK="$HOME/.buildozer/android/platform/android-sdk"
-          yes | $SDK/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          yes | $SDK/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.2" "platforms;android-33" || true
-          buildozer android debug
+          yes | buildozer android debug
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: orbitide-apk
           path: bin/*.apk

@@ -1,0 +1,35 @@
+name: Build ORBITIDE APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Put API key into app
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("main.py")
+          s = p.read_text()
+          s = s.replace('GROQ_API_KEY = ""', 'GROQ_API_KEY = "${{ secrets.GROQ_API_KEY }}"')
+          p.write_text(s)
+          PY
+
+      - name: Build APK
+        uses: ArtemSBulgakov/buildozer-action@v1
+        with:
+          command: android debug
+          workdir: .
+          buildozer_version: stable
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITIDE-debug-apk
+          path: bin/*.apk
